@@ -255,3 +255,12 @@ socket.on("game:result", r => {
     cardsShow.appendChild(p);
   });
 });
+// ===== Auto Join from URL =====
+window.addEventListener("load", () => {
+  const params = new URLSearchParams(location.search);
+  const room = params.get("room");
+
+  if (room) {
+    roomIdInput.value = room;
+  }
+});

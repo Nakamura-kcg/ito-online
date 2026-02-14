@@ -56,7 +56,6 @@ const btnReset = $("btnReset");
 
 let myId = "";
 let roomId = "";
-let myCardNum = null;
 
 /* ===== Utils ===== */
 
@@ -76,33 +75,27 @@ function labelCond(s) {
   return "";
 }
 
-/* ===== Events ===== */
+/* ===== Buttons ===== */
 
 btnCreate.onclick = () => {
   socket.emit("room:create", {
-    name: nameInput.value || "Player"
+    name: nameInput.value || makeName()
   });
 };
 
 btnJoin.onclick = () => {
   socket.emit("room:join", {
     roomId: roomIdInput.value,
-    name: nameInput.value || "Player"
+    name: nameInput.value || makeName()
   });
 };
 
-btnCopy.onclick = async () => {
-  if (!roomId) return;
-
-  const url = location.origin + "/?room=" + roomId;
-
-  await navigator.clipboard.writeText(url);
-
-  alert("コピーしました");
+btnCopy.onclick = () => {
+  const url = location.origin + "/room/" + roomId;
+  prompt("このURLをコピーして送ってね", url);
 };
 
 btnStart.onclick = () => socket.emit("game:start");
-
 btnRedraw.onclick = () => socket.emit("card:redraw");
 
 btnWord.onclick = () => {
@@ -112,7 +105,6 @@ btnWord.onclick = () => {
 };
 
 btnChallenge.onclick = () => socket.emit("game:challenge");
-
 btnReset.onclick = () => socket.emit("game:reset");
 
 /* Chat */
@@ -229,7 +221,6 @@ socket.on("room:state", s => {
 });
 
 socket.on("card:mine", n => {
-  myCardNum = n;
   myCard.textContent = n;
 });
 
@@ -255,12 +246,30 @@ socket.on("game:result", r => {
     cardsShow.appendChild(p);
   });
 });
-// ===== Auto Join from URL =====
-window.addEventListener("load", () => {
-  const params = new URLSearchParams(location.search);
-  const room = params.get("room");
 
-  if (room) {
-    roomIdInput.value = room;
+/* ===== Auto Join by URL ===== */
+
+window.addEventListener("load", () => {
+
+  // 名前自動生成
+  if (!nameInput.value) {
+    nameInput.value = makeName();
+  }
+
+  // /room/XXXX
+  if (location.pathname.startsWith("/room/")) {
+
+    const room = location.pathname.split("/")[2];
+
+    if (room) {
+      roomIdInput.value = room;
+
+      // 即JOIN
+      btnJoin.click();
+    }
   }
 });
+
+function makeName() {
+  return "Player" + Math.floor(Math.random() * 1000);
+}

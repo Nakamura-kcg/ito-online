@@ -3,18 +3,26 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
 
 const app = express();
-app.use(express.static("public"));
-
 const server = http.createServer(app);
 const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
+// static
+app.use(express.static("public"));
+
+// /room/XXXX でも index.html を返す
+app.get("/room/:id", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
 const rooms = {};
 
-// ===== Utility =====
+/* ===== Utils ===== */
+
 function genRoomId() {
   const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let id;
@@ -46,7 +54,7 @@ function judge(a, b, s) {
 function condLabel(s) {
   if (s.winType === "sum11") return "合計11";
   if (s.winType === "same") return "同じ数字";
-  if (s.winType === "both") return "合計11 or 同じ数字";
+  if (s.winType === "both") return "合計11 or 同じ";
   if (s.winType === "custom") return "合計 " + s.customSum;
   return "";
 }
@@ -80,11 +88,13 @@ function sys(roomId, text) {
   });
 }
 
-// ===== Socket =====
+/* ===== Socket ===== */
+
 io.on("connection", (s) => {
 
   // Create
   s.on("room:create", ({ name }) => {
+
     const id = genRoomId();
 
     rooms[id] = {
@@ -105,12 +115,14 @@ io.on("connection", (s) => {
     s.data.room = id;
 
     s.emit("room:created", { roomId: id });
+
     sys(id, "部屋を作成しました");
     broadcast(id);
   });
 
   // Join
   s.on("room:join", ({ roomId, name }) => {
+
     const r = rooms[roomId];
     if (!r) return;
 
@@ -127,6 +139,7 @@ io.on("connection", (s) => {
 
   // Settings
   s.on("settings:update", (d) => {
+
     const r = rooms[s.data.room];
     if (!r) return;
     if (s.id !== r.hostId) return;
@@ -141,6 +154,7 @@ io.on("connection", (s) => {
 
   // Start
   s.on("game:start", () => {
+
     const r = rooms[s.data.room];
     if (!r) return;
     if (s.id !== r.hostId) return;
@@ -161,6 +175,7 @@ io.on("connection", (s) => {
 
   // Redraw
   s.on("card:redraw", () => {
+
     const r = rooms[s.data.room];
     if (!r) return;
     if (r.phase !== "playing") return;
@@ -176,7 +191,7 @@ io.on("connection", (s) => {
     }
 
     me.card = roll();
-    me.word = ""; // reset word
+    me.word = ""; // ワードリセット
 
     io.to(s.id).emit("card:mine", me.card);
 
@@ -186,6 +201,7 @@ io.on("connection", (s) => {
 
   // Word
   s.on("word:submit", ({ word }) => {
+
     const r = rooms[s.data.room];
     if (!r) return;
     if (r.phase !== "playing") return;
@@ -193,7 +209,7 @@ io.on("connection", (s) => {
     const me = r.players[s.id];
     if (!me) return;
 
-    const w = String(word).trim();
+    const w = String(word || "").trim();
 
     if (!w) return;
     if (w.length > 30) return;
@@ -206,6 +222,7 @@ io.on("connection", (s) => {
 
   // Challenge
   s.on("game:challenge", () => {
+
     const r = rooms[s.data.room];
     if (!r) return;
     if (r.phase !== "playing") return;
@@ -235,13 +252,14 @@ io.on("connection", (s) => {
 
   // Chat
   s.on("chat:send", ({ text }) => {
+
     const r = rooms[s.data.room];
     if (!r) return;
 
     const p = r.players[s.id];
     if (!p) return;
 
-    const t = String(text).trim();
+    const t = String(text || "").trim();
     if (!t) return;
 
     io.to(s.data.room).emit("chat:msg", {
@@ -254,6 +272,7 @@ io.on("connection", (s) => {
 
   // Reset
   s.on("game:reset", () => {
+
     const r = rooms[s.data.room];
     if (!r) return;
     if (s.id !== r.hostId) return;
@@ -270,6 +289,7 @@ io.on("connection", (s) => {
 
   // Disconnect
   s.on("disconnect", () => {
+
     const r = rooms[s.data.room];
     if (!r) return;
 
@@ -285,6 +305,7 @@ io.on("connection", (s) => {
 
     broadcast(s.data.room);
   });
+
 });
 
 server.listen(PORT, () => {

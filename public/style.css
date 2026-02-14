@@ -1,100 +1,84 @@
-body {
-  margin: 0;
-  background: linear-gradient(135deg,#1f2933,#020617);
-  color: #eee;
-  font-family: sans-serif;
+body{
+margin:0;
+background:#020617;
+color:#fff;
+font-family:sans-serif;
 }
 
-.wrap {
-  max-width: 900px;
-  margin: auto;
-  padding: 15px;
+.wrap{
+max-width:900px;
+margin:auto;
+padding:10px;
 }
 
-h1,h2,h3 {
-  margin: 5px 0;
+.card{
+background:#111827;
+padding:12px;
+border-radius:12px;
+margin:10px 0;
 }
 
-.card {
-  background: #111827;
-  border-radius: 14px;
-  padding: 15px;
-  margin: 12px 0;
-  box-shadow: 0 4px 15px rgba(0,0,0,.4);
+input,select,button{
+width:100%;
+padding:8px;
+margin:5px 0;
+border-radius:6px;
+border:none;
 }
 
-input,select,button {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
+button{
+background:#6366f1;
+color:white;
+font-weight:bold;
 }
 
-input,select {
-  background: #020617;
-  color: #fff;
+.hidden{display:none;}
+
+.big{
+font-size:32px;
+text-align:center;
+padding:15px;
+background:#020617;
+border-radius:10px;
 }
 
-button {
-  background: linear-gradient(135deg,#6366f1,#818cf8);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+.row{
+display:flex;
+gap:5px;
 }
 
-button:hover {
-  opacity: .9;
+.chat{
+background:#020617;
+height:160px;
+overflow:auto;
+padding:5px;
 }
 
-.row {
-  display: flex;
-  gap: 6px;
+.msg{
+margin:3px 0;
+padding:3px;
 }
 
-.row input {
-  flex: 1;
+.mainBtn{
+font-size:18px;
+padding:12px;
 }
 
-.hidden {
-  display: none;
+/* スマホ */
+@media(max-width:600px){
+
+h1{font-size:22px;}
+
+.row{
+flex-direction:column;
 }
 
-.big {
-  font-size: 40px;
-  text-align: center;
-  background: #020617;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 10px auto;
-  width: 120px;
+.chat{
+height:120px;
 }
 
-.chat {
-  background: #020617;
-  border-radius: 10px;
-  height: 200px;
-  overflow-y: auto;
-  padding: 8px;
+.big{
+width:80px;
+margin:auto;
 }
-
-.msg {
-  margin: 4px 0;
-  padding: 4px 6px;
-  border-radius: 5px;
-}
-
-.msg.system {
-  opacity: .7;
-}
-
-.msg:not(.system) {
-  background: rgba(99,102,241,.2);
-}
-
-.mainBtn {
-  margin-top: 15px;
-  font-size: 18px;
-  padding: 14px;
 }

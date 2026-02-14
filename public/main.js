@@ -3,273 +3,244 @@
 const socket = io();
 
 const $ = id => document.getElementById(id);
+
 const show = id => $(id).classList.remove("hidden");
 const hide = id => $(id).classList.add("hidden");
 
-/* ===== Elements ===== */
+/* Elements */
 
-const nameInput = $("name");
-const roomIdInput = $("roomId");
+const nameInput=$("name");
+const roomIdInput=$("roomId");
 
-const btnCreate = $("btnCreate");
-const btnJoin = $("btnJoin");
+const btnCreate=$("btnCreate");
+const btnJoin=$("btnJoin");
+const btnCopy=$("btnCopy");
 
-const roomShow = $("roomShow");
-const btnCopy = $("btnCopy");
+const players=$("players");
 
-const players = $("players");
+const themeInput=$("theme");
+const winType=$("winType");
+const customSum=$("customSum");
+const btnStart=$("btnStart");
 
-const themeInput = $("theme");
-const winType = $("winType");
-const customWrap = $("customWrap");
-const customSum = $("customSum");
-const btnStart = $("btnStart");
+const chatLog=$("chatLog");
+const chatText=$("chatText");
+const btnSend=$("btnSend");
 
-const chatLog = $("chatLog");
-const chatText = $("chatText");
-const btnSend = $("btnSend");
+const chatLog2=$("chatLog2");
+const chatText2=$("chatText2");
+const btnSend2=$("btnSend2");
 
-const chatLog2 = $("chatLog2");
-const chatText2 = $("chatText2");
-const btnSend2 = $("btnSend2");
+const themeShow=$("themeShow");
+const condShow=$("condShow");
 
-const themeShow = $("themeShow");
-const condShow = $("condShow");
+const myCard=$("myCard");
+const btnRedraw=$("btnRedraw");
 
-const myCard = $("myCard");
-const btnRedraw = $("btnRedraw");
-const redrawInfo = $("redrawInfo");
+const wordInput=$("wordInput");
+const btnWord=$("btnWord");
+const wordStatus=$("wordStatus");
 
-const wordInput = $("wordInput");
-const btnWord = $("btnWord");
-const wordStatus = $("wordStatus");
+const btnChallenge=$("btnChallenge");
 
-const btnChallenge = $("btnChallenge");
+const resultText=$("resultText");
+const themeResult=$("themeResult");
+const condResult=$("condResult");
+const cardsShow=$("cardsShow");
+const btnReset=$("btnReset");
 
-const resultText = $("resultText");
-const themeResult = $("themeResult");
-const condResult = $("condResult");
-const cardsShow = $("cardsShow");
-const btnReset = $("btnReset");
+let myId="";
+let roomId="";
 
-/* ===== State ===== */
+/* Utils */
 
-let myId = "";
-let roomId = "";
-
-/* ===== Utils ===== */
-
-function addChat(box, m) {
-  const div = document.createElement("div");
-  div.className = "msg" + (m.system ? " system" : "");
-  div.textContent = `[${m.name}] ${m.text}`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+function addChat(box,m){
+ const d=document.createElement("div");
+ d.className="msg";
+ d.textContent=`[${m.name}] ${m.text}`;
+ box.appendChild(d);
+ box.scrollTop=box.scrollHeight;
 }
 
-function labelCond(s) {
-  if (s.winType === "sum11") return "合計11";
-  if (s.winType === "same") return "同じ数字";
-  if (s.winType === "both") return "合計11 or 同じ";
-  if (s.winType === "custom") return "合計 " + s.customSum;
-  return "";
+function labelCond(s){
+ if(s.winType==="sum11")return"合計11";
+ if(s.winType==="same")return"同じ";
+ if(s.winType==="both")return"合計11 or 同じ";
+ if(s.winType==="custom")return"合計 "+s.customSum;
+ return"";
 }
 
-/* ===== Buttons ===== */
+/* Buttons */
 
-btnCreate.onclick = () => {
-  socket.emit("room:create", {
-    name: nameInput.value || makeName()
-  });
+btnCreate.onclick=()=>{
+
+ if(!nameInput.value.trim()){
+  alert("名前を入力して");
+  return;
+ }
+
+ socket.emit("room:create",{
+  name:nameInput.value
+ });
 };
 
-btnJoin.onclick = () => {
-  socket.emit("room:join", {
-    roomId: roomIdInput.value,
-    name: nameInput.value || makeName()
-  });
+btnJoin.onclick=()=>{
+
+ if(!nameInput.value.trim()){
+  alert("名前を入力して");
+  return;
+ }
+
+ socket.emit("room:join",{
+  roomId:roomIdInput.value,
+  name:nameInput.value
+ });
 };
 
-btnCopy.onclick = () => {
-  const url = location.origin + "/room/" + roomId;
-  prompt("このURLをコピーして送ってね", url);
+btnCopy.onclick=()=>{
+ const url=location.origin+"/room/"+roomId;
+ prompt("コピーして送ってね",url);
 };
 
-btnStart.onclick = () => socket.emit("game:start");
-btnRedraw.onclick = () => socket.emit("card:redraw");
+btnStart.onclick=()=>socket.emit("game:start");
+btnRedraw.onclick=()=>socket.emit("card:redraw");
 
-btnWord.onclick = () => {
-  socket.emit("word:submit", {
-    word: wordInput.value
-  });
+btnWord.onclick=()=>{
+ socket.emit("word:submit",{word:wordInput.value});
 };
 
-btnChallenge.onclick = () => socket.emit("game:challenge");
-btnReset.onclick = () => socket.emit("game:reset");
+btnChallenge.onclick=()=>socket.emit("game:challenge");
+btnReset.onclick=()=>socket.emit("game:reset");
 
 /* Chat */
 
-btnSend.onclick = () => {
-  if (!chatText.value) return;
-  socket.emit("chat:send", { text: chatText.value });
-  chatText.value = "";
+btnSend.onclick=()=>{
+ if(!chatText.value)return;
+ socket.emit("chat:send",{text:chatText.value});
+ chatText.value="";
 };
 
-btnSend2.onclick = () => {
-  if (!chatText2.value) return;
-  socket.emit("chat:send", { text: chatText2.value });
-  chatText2.value = "";
+btnSend2.onclick=()=>{
+ if(!chatText2.value)return;
+ socket.emit("chat:send",{text:chatText2.value});
+ chatText2.value="";
 };
 
 /* Settings */
 
-themeInput.oninput =
-winType.onchange =
-customSum.oninput = () => {
+themeInput.oninput=
+winType.onchange=
+customSum.oninput=()=>{
 
-  socket.emit("settings:update", {
-    theme: themeInput.value,
-    winType: winType.value,
-    customSum: customSum.value
-  });
+ socket.emit("settings:update",{
+  theme:themeInput.value,
+  winType:winType.value,
+  customSum:customSum.value
+ });
 };
 
-/* ===== Socket ===== */
+/* Socket */
 
-socket.on("connect", () => {
-  myId = socket.id;
+socket.on("connect",()=>{
+ myId=socket.id;
 });
 
-socket.on("room:created", d => {
-  roomId = d.roomId;
+socket.on("room:created",d=>{
 
-  roomShow.textContent = roomId;
+ roomId=d.roomId;
 
-  hide("join");
-  show("lobby");
+ $("roomShow").textContent=roomId;
+
+ hide("join");
+ show("lobby");
 });
 
-socket.on("room:state", s => {
+socket.on("room:state",s=>{
 
-  roomId = s.roomId;
+ roomId=s.roomId;
 
-  roomShow.textContent = roomId;
+ $("roomShow").textContent=roomId;
 
-  /* Players */
-  players.innerHTML = "";
+ players.innerHTML="";
 
-  s.players.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent =
-      (p.id === s.hostId ? "👑 " : "") + p.name;
-    players.appendChild(li);
-  });
+ s.players.forEach(p=>{
+  const li=document.createElement("li");
+  li.textContent=
+   (p.id===s.hostId?"👑 ":"")+p.name;
+  players.appendChild(li);
+ });
 
-  /* Settings */
-  themeInput.value = s.settings.theme || "";
-  winType.value = s.settings.winType || "both";
-  customSum.value = s.settings.customSum || 11;
+ themeInput.value=s.settings.theme||"";
+ winType.value=s.settings.winType;
+ customSum.value=s.settings.customSum;
 
-  if (winType.value === "custom")
-    customWrap.classList.remove("hidden");
-  else
-    customWrap.classList.add("hidden");
+ btnStart.disabled=
+  s.players.length!==2||
+  myId!==s.hostId||
+  s.phase!=="lobby";
 
-  btnStart.disabled =
-    s.players.length !== 2 ||
-    myId !== s.hostId ||
-    s.phase !== "lobby";
+ themeShow.textContent=s.settings.theme;
+ condShow.textContent=labelCond(s.settings);
 
-  /* Game header */
-  themeShow.textContent = s.settings.theme;
-  condShow.textContent = labelCond(s.settings);
+ wordStatus.innerHTML="";
 
-  /* Redraw */
-  const last = s.redraw.last;
-  const cnt = s.redraw.count;
+ s.players.forEach(p=>{
+  const li=document.createElement("li");
+  li.textContent=
+   p.name+"："+(p.word?"済":"未");
+  wordStatus.appendChild(li);
+ });
 
-  btnRedraw.disabled =
-    s.phase !== "playing" ||
-    (last === myId && cnt >= 3);
+ if(s.phase==="lobby"){
+  show("lobby");hide("game");hide("result");
+ }
 
-  redrawInfo.textContent =
-    (last === myId)
-      ? `連続 ${cnt}/3`
-      : "";
+ if(s.phase==="playing"){
+  show("game");hide("lobby");hide("result");
+ }
 
-  /* Word status */
-  wordStatus.innerHTML = "";
+ if(s.phase==="result"){
+  show("result");hide("lobby");hide("game");
+ }
+});
 
-  s.players.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent =
-      p.name + "：" +
-      (p.word ? "送信済み" : "未送信");
-    wordStatus.appendChild(li);
-  });
+socket.on("card:mine",n=>{
+ myCard.textContent=n;
+});
 
-  /* Screen */
-  if (s.phase === "lobby") {
-    show("lobby"); hide("game"); hide("result");
+socket.on("chat:msg",m=>{
+ addChat(chatLog,m);
+ addChat(chatLog2,m);
+});
+
+socket.on("game:result",r=>{
+
+ resultText.textContent=
+  r.success?"成功！":"失敗…";
+
+ themeResult.textContent=r.theme;
+ condResult.textContent=r.condition;
+
+ cardsShow.innerHTML="";
+
+ r.cards.forEach(c=>{
+  const p=document.createElement("p");
+  p.textContent=
+   `${c.name}：${c.card}（${c.word}）`;
+  cardsShow.appendChild(p);
+ });
+});
+
+/* Auto Join */
+
+window.onload=()=>{
+
+ if(location.pathname.startsWith("/room/")){
+
+  const r=location.pathname.split("/")[2];
+
+  if(r){
+   roomIdInput.value=r;
   }
-  if (s.phase === "playing") {
-    show("game"); hide("lobby"); hide("result");
-  }
-  if (s.phase === "result") {
-    show("result"); hide("lobby"); hide("game");
-  }
-});
-
-socket.on("card:mine", n => {
-  myCard.textContent = n;
-});
-
-socket.on("chat:msg", m => {
-  addChat(chatLog, m);
-  addChat(chatLog2, m);
-});
-
-socket.on("game:result", r => {
-
-  resultText.textContent =
-    r.success ? "成功！" : "失敗…";
-
-  themeResult.textContent = r.theme;
-  condResult.textContent = r.condition;
-
-  cardsShow.innerHTML = "";
-
-  r.cards.forEach(c => {
-    const p = document.createElement("p");
-    p.textContent =
-      `${c.name}：${c.card}（${c.word}）`;
-    cardsShow.appendChild(p);
-  });
-});
-
-/* ===== Auto Join by URL ===== */
-
-window.addEventListener("load", () => {
-
-  // 名前自動生成
-  if (!nameInput.value) {
-    nameInput.value = makeName();
-  }
-
-  // /room/XXXX
-  if (location.pathname.startsWith("/room/")) {
-
-    const room = location.pathname.split("/")[2];
-
-    if (room) {
-      roomIdInput.value = room;
-
-      // 即JOIN
-      btnJoin.click();
-    }
-  }
-});
-
-function makeName() {
-  return "Player" + Math.floor(Math.random() * 1000);
-}
+ }
+};

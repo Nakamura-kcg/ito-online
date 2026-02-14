@@ -1,154 +1,130 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ito Online</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ito Online</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="wrap">
 
-<h1>🎴 Ito Online（2人用）</h1>
+<h1>🎴 Ito Online</h1>
 
-<!-- ========== Join ========== -->
 <section id="join">
-  <div class="card">
+<div class="card">
 
-    <h2>参加 / 部屋作成</h2>
+<h2>参加 / 作成</h2>
 
-    <label>
-      名前
-      <input id="name" placeholder="なまえ">
-    </label>
+<input id="name" placeholder="名前">
 
-    <button id="btnCreate">部屋を作る</button>
+<button id="btnCreate">部屋を作る</button>
 
-    <hr>
+<input id="roomId" placeholder="ルームID">
 
-    <label>
-      ルームID
-      <input id="roomId" placeholder="ABCD">
-    </label>
+<button id="btnJoin">入室</button>
 
-    <button id="btnJoin">入室</button>
-
-  </div>
+</div>
 </section>
 
-<!-- ========== Lobby ========== -->
+
 <section id="lobby" class="hidden">
-  <div class="card">
+<div class="card">
 
-    <h2>ロビー</h2>
+<h2>ロビー</h2>
 
-    <p>ルームID：<b id="roomShow"></b></p>
+<p>ルーム：<b id="roomShow"></b></p>
 
-    <button id="btnCopy">URLコピー</button>
+<button id="btnCopy">URLコピー</button>
 
-    <h3>参加者</h3>
-    <ul id="players"></ul>
+<ul id="players"></ul>
 
-    <h3>設定（ホスト）</h3>
+<h3>設定</h3>
 
-    <label>
-      お題
-      <input id="theme">
-    </label>
+<input id="theme" placeholder="お題">
 
-    <label>
-      勝利条件
-      <select id="winType">
-        <option value="both">合計11 or 同じ</option>
-        <option value="sum11">合計11</option>
-        <option value="same">同じ</option>
-        <option value="custom">カスタム</option>
-      </select>
-    </label>
+<select id="winType">
+<option value="both">合計11 or 同じ</option>
+<option value="sum11">合計11</option>
+<option value="same">同じ</option>
+<option value="custom">カスタム</option>
+</select>
 
-    <label id="customWrap" class="hidden">
-      合計
-      <input id="customSum" type="number" value="11">
-    </label>
+<input id="customSum" type="number" value="11">
 
-    <button id="btnStart">ゲーム開始</button>
+<button id="btnStart">開始</button>
 
-  </div>
+</div>
 
-  <!-- Chat -->
-  <div class="card">
-    <h2>チャット</h2>
+<div class="card">
+<h3>チャット</h3>
+<div id="chatLog" class="chat"></div>
 
-    <div id="chatLog" class="chat"></div>
+<div class="row">
+<input id="chatText">
+<button id="btnSend">送信</button>
+</div>
+</div>
 
-    <div class="row">
-      <input id="chatText">
-      <button id="btnSend">送信</button>
-    </div>
-  </div>
 </section>
 
-<!-- ========== Game ========== -->
+
 <section id="game" class="hidden">
 
-  <div class="card">
+<div class="card">
 
-    <h2>ゲーム中</h2>
+<h2>ゲーム中</h2>
 
-    <p>お題：<b id="themeShow"></b></p>
-    <p>条件：<b id="condShow"></b></p>
+<p>お題：<b id="themeShow"></b></p>
+<p>条件：<b id="condShow"></b></p>
 
-    <h3>あなたのカード</h3>
-    <div id="myCard" class="big">?</div>
+<div id="myCard" class="big">?</div>
 
-    <button id="btnRedraw">引き直す</button>
-    <p id="redrawInfo"></p>
+<button id="btnRedraw">引き直す</button>
 
-    <h3>表現ワード（30文字以内）</h3>
+<div class="row">
+<input id="wordInput" maxlength="30">
+<button id="btnWord">送信</button>
+</div>
 
-    <div class="row">
-      <input id="wordInput" maxlength="30" placeholder="例：ドラゴンくらい強い">
-      <button id="btnWord">送信</button>
-    </div>
+<ul id="wordStatus"></ul>
 
-    <ul id="wordStatus"></ul>
+<button id="btnChallenge" class="mainBtn">挑戦</button>
 
-    <button id="btnChallenge" class="mainBtn">挑戦する</button>
+</div>
 
-  </div>
+<div class="card">
 
-  <!-- Chat -->
-  <div class="card">
-    <h2>チャット</h2>
+<h3>チャット</h3>
 
-    <div id="chatLog2" class="chat"></div>
+<div id="chatLog2" class="chat"></div>
 
-    <div class="row">
-      <input id="chatText2">
-      <button id="btnSend2">送信</button>
-    </div>
-  </div>
+<div class="row">
+<input id="chatText2">
+<button id="btnSend2">送信</button>
+</div>
+
+</div>
 
 </section>
 
-<!-- ========== Result ========== -->
+
 <section id="result" class="hidden">
 
-  <div class="card">
+<div class="card">
 
-    <h2>結果</h2>
+<h2 id="resultText"></h2>
 
-    <h1 id="resultText"></h1>
+<p>お題：<b id="themeResult"></b></p>
+<p>条件：<b id="condResult"></b></p>
 
-    <p>お題：<b id="themeResult"></b></p>
-    <p>条件：<b id="condResult"></b></p>
+<div id="cardsShow"></div>
 
-    <div id="cardsShow"></div>
+<button id="btnReset">戻る</button>
 
-    <button id="btnReset">ロビーに戻る</button>
-
-  </div>
+</div>
 
 </section>
 
@@ -156,6 +132,5 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="main.js"></script>
-
 </body>
 </html>

@@ -19,19 +19,15 @@ app.get("/room/:id", (req, res) => {
 
 const rooms = {};
 
-/* Utils */
-
 function genRoomId() {
-  const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let id;
-
   do {
     id = "";
     for (let i = 0; i < 4; i++) {
-      id += c[Math.floor(Math.random() * c.length)];
+      id += chars[Math.floor(Math.random() * chars.length)];
     }
   } while (rooms[id]);
-
   return id;
 }
 
@@ -47,7 +43,6 @@ function judge(a, b, s) {
   if (s.winType === "same") return same;
   if (s.winType === "both") return sum === 11 || same;
   if (s.winType === "custom") return sum === Number(s.customSum);
-
   return false;
 }
 
@@ -74,18 +69,13 @@ function broadcast(roomId) {
     hostId: r.hostId,
     phase: r.phase,
     settings: r.settings,
-    redraw: r.redraw,
     players
   });
 }
 
-/* Socket */
-
 io.on("connection", (s) => {
 
-  // Create
   s.on("room:create", ({ name }) => {
-
     const id = genRoomId();
 
     rooms[id] = {
@@ -98,56 +88,44 @@ io.on("connection", (s) => {
         theme: "",
         winType: "both",
         customSum: 11
-      },
-      redraw: { last: null, count: 0 }
+      }
     };
 
     s.join(id);
     s.data.room = id;
-
     s.emit("room:created", { roomId: id });
 
     broadcast(id);
   });
 
-  // Join
   s.on("room:join", ({ roomId, name }) => {
-
     const r = rooms[roomId];
     if (!r) return;
-
     if (Object.keys(r.players).length >= 2) return;
 
     r.players[s.id] = { name, card: null, word: "" };
-
     s.join(roomId);
     s.data.room = roomId;
 
     broadcast(roomId);
   });
 
-  // Settings
   s.on("settings:update", (d) => {
-
     const r = rooms[s.data.room];
     if (!r) return;
     if (s.id !== r.hostId) return;
     if (r.phase !== "lobby") return;
 
     r.settings = d;
-
     broadcast(s.data.room);
   });
 
-  // Start
   s.on("game:start", () => {
-
     const r = rooms[s.data.room];
     if (!r) return;
     if (Object.keys(r.players).length !== 2) return;
 
     r.phase = "playing";
-    r.redraw = { last: null, count: 0 };
 
     for (const id in r.players) {
       r.players[id].card = roll();
@@ -158,34 +136,7 @@ io.on("connection", (s) => {
     broadcast(s.data.room);
   });
 
-  // Redraw
-  s.on("card:redraw", () => {
-
-    const r = rooms[s.data.room];
-    if (!r) return;
-    if (r.phase !== "playing") return;
-
-    const me = r.players[s.id];
-
-    if (r.redraw.last === s.id) {
-      if (r.redraw.count >= 3) return;
-      r.redraw.count++;
-    } else {
-      r.redraw.last = s.id;
-      r.redraw.count = 1;
-    }
-
-    me.card = roll();
-    me.word = "";
-
-    io.to(s.id).emit("card:mine", me.card);
-
-    broadcast(s.data.room);
-  });
-
-  // Word
   s.on("word:submit", ({ word }) => {
-
     const r = rooms[s.data.room];
     if (!r) return;
     if (r.phase !== "playing") return;
@@ -194,29 +145,22 @@ io.on("connection", (s) => {
     if (!me) return;
 
     const w = String(word || "").trim();
-
-    if (!w) return;
-    if (w.length > 30) return;
+    if (!w || w.length > 30) return;
 
     me.word = w;
-
     broadcast(s.data.room);
   });
 
-  // Challenge
   s.on("game:challenge", () => {
-
     const r = rooms[s.data.room];
     if (!r) return;
     if (r.phase !== "playing") return;
 
     const ids = Object.keys(r.players);
-
     const A = r.players[ids[0]];
     const B = r.players[ids[1]];
 
     const ok = judge(A.card, B.card, r.settings);
-
     r.phase = "result";
 
     io.to(s.data.room).emit("game:result", {
@@ -232,9 +176,7 @@ io.on("connection", (s) => {
     broadcast(s.data.room);
   });
 
-  // Chat
   s.on("chat:send", ({ text }) => {
-
     const r = rooms[s.data.room];
     if (!r) return;
 
@@ -245,7 +187,6 @@ io.on("connection", (s) => {
     if (!t) return;
 
     io.to(s.data.room).emit("chat:msg", {
-      ts: Date.now(),
       name: p.name,
       text: t,
       system: false

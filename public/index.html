@@ -4,124 +4,75 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ito Online</title>
-
 <link rel="stylesheet" href="/style.css">
 </head>
-
 <body>
 
 <div class="wrap">
 
 <h1>🎴 Ito Online</h1>
 
-<!-- Join -->
 <section id="join">
 <div class="card">
-
 <input id="name" placeholder="名前">
-
 <button id="btnCreate">部屋を作る</button>
-
 <input id="roomId" placeholder="Room ID">
-
 <button id="btnJoin">入室</button>
-
 </div>
 </section>
 
-<!-- Lobby -->
 <section id="lobby" class="hidden">
 <div class="card">
-
 <p>Room：<b id="roomShow"></b></p>
-
 <button id="btnCopy">URLコピー</button>
-
 <ul id="players"></ul>
 
 <input id="theme" placeholder="お題">
-
 <select id="winType">
 <option value="both">合計11 or 同じ</option>
 <option value="sum11">合計11</option>
 <option value="same">同じ</option>
 <option value="custom">カスタム</option>
 </select>
-
 <input id="customSum" type="number" value="11">
-
 <button id="btnStart">開始</button>
-
 </div>
 
 <div class="card">
-
 <div id="chatLog" class="chat"></div>
-
 <div class="row">
 <input id="chatText">
 <button id="btnSend">送信</button>
 </div>
-
 </div>
 </section>
 
-<!-- Game -->
 <section id="game" class="hidden">
-
 <div class="card">
-
 <p>お題：<b id="themeShow"></b></p>
 <p>条件：<b id="condShow"></b></p>
-
 <div id="myCard" class="big">?</div>
-
-<button id="btnRedraw">引き直す</button>
-
 <div class="row">
 <input id="wordInput" maxlength="30">
 <button id="btnWord">送信</button>
 </div>
-
 <ul id="wordStatus"></ul>
-
-<button id="btnChallenge" class="mainBtn">挑戦</button>
-
+<button id="btnChallenge">挑戦</button>
 </div>
-
-<div class="card">
-
-<div id="chatLog2" class="chat"></div>
-
-<div class="row">
-<input id="chatText2">
-<button id="btnSend2">送信</button>
-</div>
-
-</div>
-
 </section>
 
-<!-- Result -->
 <section id="result" class="hidden">
-
 <div class="card">
-
 <h2 id="resultText"></h2>
-
 <p>お題：<b id="themeResult"></b></p>
 <p>条件：<b id="condResult"></b></p>
-
 <div id="cardsShow"></div>
-
 </div>
-
 </section>
 
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/main.js"></script>
-
 </body>
 </html>

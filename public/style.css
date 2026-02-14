@@ -15,15 +15,16 @@ padding:10px;
 background:#111827;
 padding:12px;
 border-radius:12px;
-margin:10px 0;
+margin:8px 0;
 }
 
 input,select,button{
 width:100%;
-padding:8px;
+padding:10px;
 margin:5px 0;
 border-radius:6px;
 border:none;
+font-size:16px;
 }
 
 button{
@@ -42,11 +43,6 @@ background:#020617;
 border-radius:10px;
 }
 
-.row{
-display:flex;
-gap:5px;
-}
-
 .chat{
 background:#020617;
 height:160px;
@@ -59,74 +55,7 @@ margin:3px 0;
 padding:3px;
 }
 
-.mainBtn{
-font-size:18px;
-padding:12px;
-}
-
-/* スマホ */
-@media(max-width:600px){
-
-h1{font-size:22px;}
-
-.row{
-flex-direction:column;
-}
-
-.chat{
-height:120px;
-}
-
-.big{
-width:80px;
-margin:auto;
-}
-}
-/* ===== 強化スマホUI ===== */
-@media (max-width: 600px) {
-
-  body {
-    font-size: 14px;
-  }
-
-  .wrap {
-    padding: 5px;
-  }
-
-  h1 {
-    font-size: 20px;
-  }
-
-  .card {
-    padding: 8px;
-    margin: 6px 0;
-  }
-
-  input, button, select {
-    font-size: 15px;
-    padding: 10px;
-  }
-
-  /* チャット入力を固定 */
-  .row {
-    position: sticky;
-    bottom: 0;
-    background: #020617;
-    padding: 5px 0;
-    z-index: 10;
-  }
-
-  .chat {
-    height: 120px;
-  }
-
-  #myCard {
-    font-size: 26px;
-    width: 70px;
-  }
-
-  .mainBtn {
-    font-size: 16px;
-    padding: 12px;
-  }
+/* iPhoneズーム防止 */
+input, textarea, select {
+font-size:16px !important;
 }

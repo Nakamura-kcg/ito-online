@@ -1,28 +1,158 @@
-
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ja">
 <head>
-<meta charset="utf-8">
-<title>Ito Online</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ito Online（2人）</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Ito Online</h1>
+  <div class="wrap">
+    <h1>Ito Online（2人）</h1>
 
-<div id="join">
-<input id="name" placeholder="名前">
-<button onclick="create()">部屋作成</button><br>
-<input id="room" placeholder="ROOM">
-<button onclick="join()">参加</button>
-</div>
+    <section id="join">
+      <div class="card">
+        <h2>参加 / 部屋作成</h2>
+        <label>名前
+          <input id="name" maxlength="20" placeholder="なまえ" />
+        </label>
 
-<div id="game" style="display:none">
-<h2 id="info"></h2>
-<h1 id="card">?</h1>
-<button onclick="redraw()">引き直し</button>
-<button onclick="start()">開始(ホスト)</button>
-</div>
+        <div class="row">
+          <button id="btnCreate">部屋を作る（ホスト）</button>
+        </div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="main.js"></script>
+        <div class="row">
+          <label>ルームID
+            <input id="roomId" maxlength="8" placeholder="例：ABCD" />
+          </label>
+          <button id="btnJoin">入室</button>
+        </div>
+
+        <p class="muted">URLに <code>?room=ABCD</code> が付いてたら、ルームIDは自動入力されます。</p>
+      </div>
+    </section>
+
+    <section id="lobby" class="hidden">
+      <div class="card">
+        <h2>ロビー</h2>
+        <div class="row">
+          <div>ルームID：<b id="roomShow"></b></div>
+          <button id="btnCopy">URLコピー</button>
+        </div>
+
+        <div class="subcard">
+          <h3>参加者</h3>
+          <ul id="players"></ul>
+        </div>
+
+        <div class="subcard">
+          <h3>部屋設定（ホストのみ）</h3>
+
+          <label>お題（テーマ）
+            <input id="theme" maxlength="60" placeholder="例：強さ / 辛さ / 人気 / 怖さ ..." />
+          </label>
+
+          <label>勝利条件
+            <select id="winType">
+              <option value="both">合計11 または 同じ数字</option>
+              <option value="sum11">合計が11</option>
+              <option value="same">同じ数字</option>
+              <option value="custom">合計が（カスタム）</option>
+            </select>
+          </label>
+
+          <label id="customWrap" class="hidden">カスタム合計
+            <input id="customSum" type="number" min="2" max="20" value="11" />
+          </label>
+
+          <div class="row">
+            <button id="btnStart">ゲーム開始（ホスト）</button>
+            <span class="muted" id="startHint"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>チャット</h2>
+        <div id="chatLog" class="chat"></div>
+        <div class="row">
+          <input id="chatText" maxlength="200" placeholder="メッセージ（200文字まで）" />
+          <button id="btnSend">送信</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="game" class="hidden">
+      <div class="card">
+        <h2>ゲーム</h2>
+        <div class="subcard">
+          <div>お題：<b id="themeShow"></b></div>
+          <div>条件：<b id="condShow"></b></div>
+        </div>
+
+        <div class="subcard">
+          <h3>あなたのカード</h3>
+          <div class="big" id="myCard">?</div>
+
+          <div class="row">
+            <button id="btnRedraw">引き直す</button>
+            <span class="muted" id="redrawInfo"></span>
+          </div>
+        </div>
+
+        <div class="subcard">
+          <h3>表現ワード（数字を言わずに、ワードで伝える）</h3>
+          <p class="muted">例：お題「強さ」なら「子猫くらい」「ドラゴン級」など</p>
+          <div class="row">
+            <input id="wordInput" maxlength="60" placeholder="自分の表現ワード（60文字まで）" />
+            <button id="btnWord">送信（1回）</button>
+          </div>
+
+          <div class="subcard" style="margin-top:10px">
+            <h3>送信状況</h3>
+            <ul id="wordStatus"></ul>
+          </div>
+        </div>
+
+        <div class="subcard">
+          <h3>挑戦</h3>
+          <p class="muted">「そろってる / 合計11だ」と思ったら押す（どちらが押してもOK）</p>
+          <button id="btnChallenge">挑戦する（公開して判定）</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>チャット</h2>
+        <div id="chatLog2" class="chat"></div>
+        <div class="row">
+          <input id="chatText2" maxlength="200" placeholder="メッセージ（200文字まで）" />
+          <button id="btnSend2">送信</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" class="hidden">
+      <div class="card">
+        <h2>リザルト</h2>
+        <div id="resultText" class="big"></div>
+        <div class="subcard">
+          <div>お題：<b id="themeResult"></b></div>
+          <div>条件：<b id="condResult"></b></div>
+          <div class="muted" id="noteResult"></div>
+        </div>
+
+        <div class="subcard" id="cardsShow"></div>
+
+        <div class="row">
+          <button id="btnReset">ロビーに戻る（ホスト）</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="toast" class="toast hidden"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

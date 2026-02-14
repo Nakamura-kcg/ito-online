@@ -1,1 +1,24 @@
-body{font-family:sans-serif;background:#111;color:#fff;text-align:center;}
+:root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP",sans-serif}
+body{margin:0;background:#0b0c10;color:#e7e7e7}
+.wrap{max-width:980px;margin:0 auto;padding:18px}
+h1{margin:6px 0 18px;font-size:22px}
+h2{margin:0 0 10px;font-size:18px}
+h3{margin:0 0 8px;font-size:15px;opacity:.95}
+.card{background:#14151a;border:1px solid #252632;border-radius:14px;padding:14px;margin:12px 0}
+.subcard{background:#101116;border:1px solid #232431;border-radius:12px;padding:12px;margin-top:12px}
+label{display:block;margin:10px 0}
+input,select,button{font-size:15px;border-radius:10px;border:1px solid #2a2b3a;background:#0f1016;color:#e7e7e7;padding:10px}
+button{background:#1a1b25;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.row input{flex:1;min-width:220px}
+.muted{opacity:.75;font-size:13px}
+.hidden{display:none!important}
+.big{font-size:42px;font-weight:800;letter-spacing:1px;margin:10px 0}
+ul{margin:8px 0 0;padding-left:18px}
+.chat{height:220px;overflow:auto;background:#0f1016;border:1px solid #232431;border-radius:12px;padding:10px}
+.msg{margin:6px 0;line-height:1.35}
+.msg .who{font-weight:700;margin-right:6px}
+.msg.system{opacity:.85}
+code{background:#0f1016;border:1px solid #232431;padding:2px 6px;border-radius:8px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1d1e2a;border:1px solid #343552;padding:10px 12px;border-radius:12px;max-width:90vw}

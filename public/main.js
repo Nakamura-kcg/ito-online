@@ -1,6 +1,8 @@
 "use strict";
 
-const socket = io();
+const socket = io({
+  path: "/socket.io"
+});
 
 const $ = id => document.getElementById(id);
 
@@ -233,14 +235,27 @@ socket.on("game:result",r=>{
 
 /* Auto Join */
 
-window.onload=()=>{
+socket.on("connect", () => {
 
- if(location.pathname.startsWith("/room/")){
+  if (location.pathname.startsWith("/room/")) {
 
-  const r=location.pathname.split("/")[2];
+    const r = location.pathname.split("/")[2];
 
-  if(r){
-   roomIdInput.value=r;
+    if (r) {
+
+      roomIdInput.value = r;
+
+      if (!nameInput.value.trim()) {
+        alert("名前を入力してね");
+        return;
+      }
+
+      // 接続後にJOIN
+      socket.emit("room:join", {
+        roomId: r,
+        name: nameInput.value
+      });
+    }
   }
- }
-};
+});
+

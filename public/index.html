@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ito Online</title>
+
 <link rel="stylesheet" href="/style.css">
 </head>
 
@@ -13,35 +14,30 @@
 
 <h1>🎴 Ito Online</h1>
 
+<!-- Join -->
 <section id="join">
 <div class="card">
-
-<h2>参加 / 作成</h2>
 
 <input id="name" placeholder="名前">
 
 <button id="btnCreate">部屋を作る</button>
 
-<input id="roomId" placeholder="ルームID">
+<input id="roomId" placeholder="Room ID">
 
 <button id="btnJoin">入室</button>
 
 </div>
 </section>
 
-
+<!-- Lobby -->
 <section id="lobby" class="hidden">
 <div class="card">
 
-<h2>ロビー</h2>
-
-<p>ルーム：<b id="roomShow"></b></p>
+<p>Room：<b id="roomShow"></b></p>
 
 <button id="btnCopy">URLコピー</button>
 
 <ul id="players"></ul>
-
-<h3>設定</h3>
 
 <input id="theme" placeholder="お題">
 
@@ -59,23 +55,21 @@
 </div>
 
 <div class="card">
-<h3>チャット</h3>
+
 <div id="chatLog" class="chat"></div>
 
 <div class="row">
 <input id="chatText">
 <button id="btnSend">送信</button>
 </div>
-</div>
 
+</div>
 </section>
 
-
+<!-- Game -->
 <section id="game" class="hidden">
 
 <div class="card">
-
-<h2>ゲーム中</h2>
 
 <p>お題：<b id="themeShow"></b></p>
 <p>条件：<b id="condShow"></b></p>
@@ -97,8 +91,6 @@
 
 <div class="card">
 
-<h3>チャット</h3>
-
 <div id="chatLog2" class="chat"></div>
 
 <div class="row">
@@ -110,7 +102,7 @@
 
 </section>
 
-
+<!-- Result -->
 <section id="result" class="hidden">
 
 <div class="card">
@@ -122,8 +114,6 @@
 
 <div id="cardsShow"></div>
 
-<button id="btnReset">戻る</button>
-
 </div>
 
 </section>
@@ -132,5 +122,6 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/main.js"></script>
+
 </body>
 </html>

@@ -13,14 +13,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static("public"));
 
-// /room/XXXX 用
 app.get("/room/:id", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 const rooms = {};
 
-/* ===== Utils ===== */
+/* Utils */
 
 function genRoomId() {
   const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -54,7 +53,7 @@ function judge(a, b, s) {
 
 function condLabel(s) {
   if (s.winType === "sum11") return "合計11";
-  if (s.winType === "same") return "同じ数字";
+  if (s.winType === "same") return "同じ";
   if (s.winType === "both") return "合計11 or 同じ";
   if (s.winType === "custom") return "合計 " + s.customSum;
   return "";
@@ -80,20 +79,11 @@ function broadcast(roomId) {
   });
 }
 
-function sys(roomId, text) {
-  io.to(roomId).emit("chat:msg", {
-    ts: Date.now(),
-    name: "system",
-    text,
-    system: true
-  });
-}
-
-/* ===== Socket ===== */
+/* Socket */
 
 io.on("connection", (s) => {
 
-  // 作成
+  // Create
   s.on("room:create", ({ name }) => {
 
     const id = genRoomId();
@@ -117,11 +107,10 @@ io.on("connection", (s) => {
 
     s.emit("room:created", { roomId: id });
 
-    sys(id, "部屋を作成しました");
     broadcast(id);
   });
 
-  // 入室
+  // Join
   s.on("room:join", ({ roomId, name }) => {
 
     const r = rooms[roomId];
@@ -134,11 +123,10 @@ io.on("connection", (s) => {
     s.join(roomId);
     s.data.room = roomId;
 
-    sys(roomId, name + " が参加しました");
     broadcast(roomId);
   });
 
-  // 設定
+  // Settings
   s.on("settings:update", (d) => {
 
     const r = rooms[s.data.room];
@@ -151,12 +139,11 @@ io.on("connection", (s) => {
     broadcast(s.data.room);
   });
 
-  // 開始
+  // Start
   s.on("game:start", () => {
 
     const r = rooms[s.data.room];
     if (!r) return;
-    if (s.id !== r.hostId) return;
     if (Object.keys(r.players).length !== 2) return;
 
     r.phase = "playing";
@@ -168,11 +155,10 @@ io.on("connection", (s) => {
       io.to(id).emit("card:mine", r.players[id].card);
     }
 
-    sys(s.data.room, "ゲーム開始！");
     broadcast(s.data.room);
   });
 
-  // 引き直し
+  // Redraw
   s.on("card:redraw", () => {
 
     const r = rooms[s.data.room];
@@ -194,11 +180,10 @@ io.on("connection", (s) => {
 
     io.to(s.id).emit("card:mine", me.card);
 
-    sys(s.data.room, me.name + " が引き直しました");
     broadcast(s.data.room);
   });
 
-  // ワード
+  // Word
   s.on("word:submit", ({ word }) => {
 
     const r = rooms[s.data.room];
@@ -218,7 +203,7 @@ io.on("connection", (s) => {
     broadcast(s.data.room);
   });
 
-  // 挑戦
+  // Challenge
   s.on("game:challenge", () => {
 
     const r = rooms[s.data.room];
@@ -247,7 +232,7 @@ io.on("connection", (s) => {
     broadcast(s.data.room);
   });
 
-  // チャット
+  // Chat
   s.on("chat:send", ({ text }) => {
 
     const r = rooms[s.data.room];
@@ -267,22 +252,6 @@ io.on("connection", (s) => {
     });
   });
 
-  // リセット
-  s.on("game:reset", () => {
-
-    const r = rooms[s.data.room];
-    if (!r) return;
-    if (s.id !== r.hostId) return;
-
-    r.phase = "lobby";
-
-    for (const id in r.players) {
-      r.players[id].card = null;
-      r.players[id].word = "";
-    }
-
-    broadcast(s.data.room);
-  });
-
 });
+
 server.listen(PORT);

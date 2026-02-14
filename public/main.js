@@ -116,17 +116,25 @@ btnReset.onclick=()=>socket.emit("game:reset");
 
 /* Chat */
 
-btnSend.onclick=()=>{
- if(!chatText.value)return;
- socket.emit("chat:send",{text:chatText.value});
- chatText.value="";
-};
+// チャット送信（スマホ対応）
+btnSend.onclick = sendChat;
+btnSend2.onclick = sendChat;
 
-btnSend2.onclick=()=>{
- if(!chatText2.value)return;
- socket.emit("chat:send",{text:chatText2.value});
- chatText2.value="";
-};
+function sendChat() {
+
+  const t =
+    document.activeElement === chatText2
+      ? chatText2.value
+      : chatText.value;
+
+  if (!t.trim()) return;
+
+  socket.emit("chat:send", { text: t });
+
+  chatText.value = "";
+  chatText2.value = "";
+}
+
 
 /* Settings */
 
@@ -145,6 +153,7 @@ customSum.oninput=()=>{
 
 socket.on("connect",()=>{
  myId=socket.id;
+ console.log("MY ID:", myId);
 });
 
 socket.on("room:created",d=>{
@@ -175,11 +184,9 @@ socket.on("room:state",s=>{
  themeInput.value=s.settings.theme||"";
  winType.value=s.settings.winType;
  customSum.value=s.settings.customSum;
-
- btnStart.disabled=
-  s.players.length!==2||
-  myId!==s.hostId||
-  s.phase!=="lobby";
+  btnStart.disabled =
+  s.players.length !== 2 ||
+  s.phase !== "lobby";
 
  themeShow.textContent=s.settings.theme;
  condShow.textContent=labelCond(s.settings);

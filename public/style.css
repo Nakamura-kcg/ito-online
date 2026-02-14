@@ -82,3 +82,51 @@ width:80px;
 margin:auto;
 }
 }
+/* ===== 強化スマホUI ===== */
+@media (max-width: 600px) {
+
+  body {
+    font-size: 14px;
+  }
+
+  .wrap {
+    padding: 5px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 8px;
+    margin: 6px 0;
+  }
+
+  input, button, select {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  /* チャット入力を固定 */
+  .row {
+    position: sticky;
+    bottom: 0;
+    background: #020617;
+    padding: 5px 0;
+    z-index: 10;
+  }
+
+  .chat {
+    height: 120px;
+  }
+
+  #myCard {
+    font-size: 26px;
+    width: 70px;
+  }
+
+  .mainBtn {
+    font-size: 16px;
+    padding: 12px;
+  }
+}

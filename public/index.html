@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ito Online</title>
+</head>
+<body>
+<h1>Ito Online</h1>
+
+<div id="join">
+<input id="name" placeholder="名前">
+<button onclick="create()">部屋作成</button><br>
+<input id="room" placeholder="ROOM">
+<button onclick="join()">参加</button>
+</div>
+
+<div id="game" style="display:none">
+<h2 id="info"></h2>
+<h1 id="card">?</h1>
+<button onclick="redraw()">引き直し</button>
+<button onclick="start()">開始(ホスト)</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
